@@ -1,0 +1,609 @@
+/* ==========================================================================
+   Landing page — navbar, intro, section, grid poster, footer
+   Semua kelas berawalan "mv-" agar tidak bentrok dengan Tailwind.
+   ========================================================================== */
+
+.mv-page h1,
+.mv-page h2,
+.mv-page h3,
+.mv-page h4 {
+  margin: 0;
+  font-family: var(--mv-display);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  color: var(--mv-text);
+}
+
+.mv-page p {
+  margin: 0;
+}
+
+/* --- Navbar ------------------------------------------------------------- */
+
+.mv-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7, 6, 9, 0.72);
+  border-bottom: 1px solid var(--mv-line);
+  backdrop-filter: blur(16px) saturate(140%);
+}
+
+.mv-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  height: 72px;
+}
+
+.mv-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.mv-brand__mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(140deg, var(--mv-red), var(--mv-red-deep));
+  box-shadow:
+    0 10px 26px -10px var(--mv-red-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-family: var(--mv-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+.mv-brand__text {
+  font-family: var(--mv-display);
+  font-size: 1.16rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--mv-text);
+}
+
+.mv-brand__text span {
+  color: var(--mv-red);
+}
+
+.mv-brand--small .mv-brand__mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  font-size: 0.72rem;
+}
+
+.mv-brand--small .mv-brand__text {
+  font-size: 0.95rem;
+}
+
+.mv-nav__links {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2.2vw, 30px);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--mv-muted);
+}
+
+.mv-nav__links a {
+  position: relative;
+  padding-block: 6px;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.mv-nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: var(--mv-red);
+  transition: width 0.25s ease;
+}
+
+.mv-nav__links a:hover {
+  color: var(--mv-text);
+}
+
+.mv-nav__links a:hover::after {
+  width: 100%;
+}
+
+.mv-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mv-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--mv-line);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mv-muted-dim);
+  white-space: nowrap;
+}
+
+.mv-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.mv-status.is-live {
+  color: #5fd68c;
+  border-color: rgba(95, 214, 140, 0.3);
+  background: rgba(95, 214, 140, 0.08);
+}
+
+.mv-status.is-live::before {
+  box-shadow: 0 0 10px rgba(95, 214, 140, 0.9);
+}
+
+.mv-nav__cta {
+  padding: 9px 18px;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 900px) {
+  .mv-nav__links {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .mv-nav__inner {
+    height: 64px;
+  }
+
+  .mv-status {
+    display: none;
+  }
+
+  .mv-brand__text {
+    font-size: 1.02rem;
+  }
+}
+
+/* --- Intro / hero ------------------------------------------------------- */
+
+.mv-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  align-items: end;
+  gap: clamp(24px, 4vw, 56px);
+  padding-block: clamp(30px, 5vw, 58px) clamp(20px, 3vw, 34px);
+}
+
+.mv-hero__text {
+  animation: mv-fade-up 0.7s cubic-bezier(0.22, 0.68, 0, 1) both;
+}
+
+.mv-hero h1 {
+  margin-top: 14px;
+  font-size: clamp(2.15rem, 5.6vw, 4rem);
+  line-height: 0.96;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+
+.mv-hero__accent {
+  color: #d5dbe4;
+  text-shadow: 0 0 36px rgba(148, 163, 184, 0.16);
+}
+
+.mv-hero__lead {
+  margin-top: 16px;
+  max-width: 54ch;
+  font-size: clamp(0.94rem, 1.15vw, 1.04rem);
+  line-height: 1.65;
+  color: var(--mv-muted);
+}
+
+.mv-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.mv-hero__icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Panel ringkasan */
+.mv-hero__panel {
+  display: grid;
+  padding-inline: 24px;
+  border-radius: 20px;
+  border: 1px solid var(--mv-line);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.055),
+    rgba(255, 255, 255, 0.012)
+  );
+  backdrop-filter: blur(10px);
+  animation: mv-fade-up 0.7s 0.1s cubic-bezier(0.22, 0.68, 0, 1) both;
+}
+
+.mv-hero__stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 15px;
+  border-bottom: 1px solid var(--mv-line);
+}
+
+.mv-hero__stat:last-child {
+  border-bottom: 0;
+}
+
+.mv-hero__stat-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--mv-muted-dim);
+}
+
+.mv-hero__stat-value {
+  font-family: var(--mv-display);
+  font-size: 1.55rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--mv-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.mv-hero__stat-value small {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--mv-muted-dim);
+  margin-left: 2px;
+}
+
+.mv-hero__stat-value--text {
+  font-family: var(--mv-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .mv-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: clamp(24px, 6vw, 40px) 8px;
+  }
+
+  .mv-hero__panel {
+    display: none;
+  }
+}
+
+/* --- Section umum ------------------------------------------------------- */
+
+.mv-section {
+  padding-block: clamp(24px, 3.5vw, 40px);
+  animation: mv-fade-up 0.7s 0.16s cubic-bezier(0.22, 0.68, 0, 1) both;
+  scroll-margin-top: 92px;
+}
+
+.mv-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(16px, 2vw, 22px);
+}
+
+.mv-section-title {
+  margin-top: 10px;
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mv-section-hint {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mv-muted-dim);
+}
+
+/* --- Grid poster -------------------------------------------------------- */
+
+.mv-poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+  gap: clamp(14px, 1.8vw, 22px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mv-poster {
+  min-width: 0;
+  animation: mv-fade-up 0.5s ease both;
+}
+
+.mv-poster__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.mv-poster__link:active .mv-poster__media {
+  transform: scale(0.975);
+}
+
+.mv-poster__link:focus-visible {
+  outline: 2px solid rgba(203, 213, 225, 0.75);
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+
+.mv-poster__media {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--mv-line);
+  background:
+    radial-gradient(120% 90% at 20% 0%, var(--accent-a, #222731), transparent 70%),
+    linear-gradient(165deg, var(--accent-a, #222731), var(--accent-b, #0d0f13) 80%);
+  transition:
+    transform 0.4s cubic-bezier(0.22, 0.68, 0, 1),
+    border-color 0.3s ease,
+    box-shadow 0.4s ease;
+}
+
+.mv-poster__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.22, 0.68, 0, 1);
+}
+
+/* Gradasi bawah supaya badge rating selalu terbaca */
+.mv-poster__media::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  background: linear-gradient(to top, rgba(5, 4, 8, 0.78), transparent);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .mv-poster__media:hover {
+    transform: translateY(-4px);
+    border-color: rgba(203, 213, 225, 0.35);
+    box-shadow: 0 22px 44px -20px rgba(0, 0, 0, 0.9);
+  }
+
+  .mv-poster__media:hover img {
+    transform: scale(1.06);
+  }
+}
+
+.mv-poster__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: radial-gradient(
+    80% 55% at 50% 0%,
+    rgba(148, 163, 184, 0.18),
+    transparent 72%
+  );
+  text-align: center;
+}
+
+.mv-poster__fallback span {
+  font-family: var(--mv-display);
+  font-size: clamp(0.92rem, 1.6vw, 1.15rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+.mv-poster__rating {
+  position: absolute;
+  z-index: 2;
+  top: 9px;
+  left: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(6, 4, 9, 0.7);
+  backdrop-filter: blur(8px);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.mv-poster__rating svg {
+  width: 11px;
+  height: 11px;
+  fill: var(--mv-red);
+}
+
+.mv-poster__title {
+  margin-top: 10px;
+  font-family: var(--mv-display);
+  font-size: 0.98rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mv-poster__meta {
+  margin-top: 3px;
+  font-size: 0.76rem;
+  color: var(--mv-muted-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mv-poster__title--skel {
+  width: 78%;
+  height: 13px;
+  margin-top: 12px;
+  border-radius: 6px;
+}
+
+@media (max-width: 520px) {
+  .mv-poster-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+/* --- Banner info -------------------------------------------------------- */
+
+.mv-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-block: clamp(20px, 3vw, 30px) clamp(28px, 4vw, 44px);
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(
+    120deg,
+    rgba(148, 163, 184, 0.07),
+    rgba(148, 163, 184, 0.02)
+  );
+}
+
+.mv-notice--warn {
+  border-color: rgba(255, 176, 32, 0.35);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 176, 32, 0.12),
+    rgba(255, 176, 32, 0.03)
+  );
+}
+
+.mv-notice__icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: var(--mv-red);
+  font-family: var(--mv-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.mv-notice--warn .mv-notice__icon {
+  border-color: rgba(255, 176, 32, 0.55);
+  color: #ffb020;
+}
+
+.mv-notice strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.mv-notice p {
+  margin-top: 4px;
+  max-width: 72ch;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--mv-muted);
+}
+
+/* --- Footer ------------------------------------------------------------- */
+
+.mv-footer {
+  border-top: 1px solid var(--mv-line);
+  margin-top: clamp(32px, 5vw, 56px);
+  padding-block: 26px;
+  background: linear-gradient(180deg, transparent, rgba(148, 163, 184, 0.025));
+}
+
+.mv-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  flex-wrap: wrap;
+}
+
+.mv-footer__note,
+.mv-footer__copy {
+  font-size: 0.79rem;
+  color: var(--mv-muted-dim);
+}
+
+/* --- Animasi ------------------------------------------------------------ */
+
+@keyframes mv-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mv-hero__text,
+  .mv-hero__panel,
+  .mv-section,
+  .mv-poster {
+    animation: none;
+  }
+}
