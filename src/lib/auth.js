@@ -1,64 +1,43 @@
-const SESSION_CACHE = "mv_local_user";
-const OLD_SESSION_CACHE = "mv_supabase_user";
+const PROFILE_KEY = "darchive_private_profile";
+const DEFAULT_PROFILE = {
+  id: "private-owner",
+  name: "Koleksi pribadi",
+  email: "darchive-owner@local.invalid",
+};
 
 export function getSession() {
+  let legacyProfile = null;
   try {
-    localStorage.removeItem(OLD_SESSION_CACHE);
-    const value = localStorage.getItem(SESSION_CACHE);
-    return value ? JSON.parse(value) : null;
+    const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
+    legacyProfile = saved?.id && saved?.email
+      ? saved
+      : ["mv_static_user", "mv_local_user"]
+          .map((key) => {
+            try {
+              return JSON.parse(localStorage.getItem(key) || "null");
+            } catch {
+              return null;
+            }
+          })
+          .find((profile) => profile?.email);
   } catch {
-    return null;
+    legacyProfile = null;
   }
-}
 
-export async function getAuthenticatedUser() {
-  const response = await fetch("/api/auth/session", {
-    credentials: "same-origin",
-  });
-  if (response.status === 401) {
-    localStorage.removeItem(SESSION_CACHE);
-    return null;
+  const profile = legacyProfile?.email
+    ? {
+        ...DEFAULT_PROFILE,
+        name: legacyProfile.name || DEFAULT_PROFILE.name,
+        email: legacyProfile.email,
+      }
+    : DEFAULT_PROFILE;
+  try {
+    localStorage.removeItem("mv_static_accounts");
+    localStorage.removeItem("mv_static_user");
+    localStorage.removeItem("mv_local_user");
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    return profile;
   }
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.error || "Sesi tidak dapat diverifikasi.");
-  }
-  localStorage.setItem(SESSION_CACHE, JSON.stringify(result.user));
-  return result.user;
-}
-
-export async function register(name, email, password) {
-  const response = await fetch("/api/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "same-origin",
-    body: JSON.stringify({ name, email, password }),
-  });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Pendaftaran akun gagal.");
-  localStorage.setItem(SESSION_CACHE, JSON.stringify(result.user));
-  return result.user;
-}
-
-export async function login(email, password) {
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "same-origin",
-    body: JSON.stringify({ email, password }),
-  });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Login gagal.");
-  localStorage.setItem(SESSION_CACHE, JSON.stringify(result.user));
-  return result.user;
-}
-
-export async function logout() {
-  const response = await fetch("/api/auth/logout", {
-    method: "POST",
-    credentials: "same-origin",
-  });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Tidak dapat keluar.");
-  localStorage.removeItem(SESSION_CACHE);
+  return profile;
 }

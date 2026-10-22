@@ -20,7 +20,7 @@ const AUTOPLAY_MS = 7000;
 export default function MovieCarousel({
   movies = [],
   loading = false,
-  ctaHref = "/login",
+  ctaHref = "/dashboard",
   ctaLabel = "Simpan ke daftar",
 }) {
   const trackRef = useRef(null);

@@ -7,10 +7,6 @@ export default defineConfig({
   server: {
     host: "localhost",
     port: 5173,
-    proxy: {
-      "/api": "http://127.0.0.1:3001",
-    },
-    // Jika localhost lama masih aktif, Vite memilih port berikutnya.
     strictPort: false,
   },
 });

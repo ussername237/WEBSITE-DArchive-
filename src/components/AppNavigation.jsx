@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { getSession, logout } from "../lib/auth.js";
+import { NavLink } from "react-router-dom";
 
 const links = [
   { to: "/dashboard", label: "Ringkasan" },
@@ -9,20 +7,6 @@ const links = [
 ];
 
 export default function AppNavigation() {
-  const navigate = useNavigate();
-  const session = getSession();
-  const [logoutError, setLogoutError] = useState("");
-
-  async function handleLogout() {
-    setLogoutError("");
-    try {
-      await logout();
-      navigate("/login");
-    } catch (error) {
-      setLogoutError(error.message || "Tidak dapat mengakhiri sesi.");
-    }
-  }
-
   return (
     <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#0a0b0e]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
@@ -53,23 +37,16 @@ export default function AppNavigation() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <span className="hidden max-w-32 truncate text-xs text-slate-400 sm:block">
-            {session?.name || "Akun"}
-          </span>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-slate-300 transition hover:border-white/25 hover:text-white"
-          >
-            Keluar
-          </button>
+          {!["localhost", "127.0.0.1"].includes(window.location.hostname) && (
+            <a
+              href="/cdn-cgi/access/logout?returnTo=/"
+              className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-slate-300 transition hover:border-white/25 hover:text-white"
+            >
+              Keluar
+            </a>
+          )}
         </div>
       </div>
-      {logoutError && (
-        <p className="mx-auto max-w-6xl px-4 pb-3 text-xs text-red-200 sm:px-6">
-          {logoutError}
-        </p>
-      )}
     </header>
   );
 }

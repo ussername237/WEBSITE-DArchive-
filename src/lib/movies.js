@@ -1,4 +1,5 @@
 // Penyimpanan daftar film per pengguna + data film dari TMDB.
+import fetchJson from "./fetchJson.js";
 
 const TMDB_KEY = (import.meta.env.VITE_TMDB_KEY || "").trim();
 const OMDB_KEY = (import.meta.env.VITE_OMDB_KEY || "").trim();
@@ -15,15 +16,14 @@ async function requestTmdb(path, params = {}) {
     language: "en-US",
     ...params,
   });
-  const response = await fetch(`${BASE}${path}?${searchParams}`);
-  if (!response.ok) {
-    throw new Error(
-      response.status === 401
-        ? "API key TMDB ditolak. Periksa VITE_TMDB_KEY."
-        : `TMDB membalas ${response.status}.`
-    );
+  try {
+    return await fetchJson(`${BASE}${path}?${searchParams}`);
+  } catch (error) {
+    if (error.status === 401) {
+      throw new Error("API key TMDB ditolak. Periksa VITE_TMDB_KEY.");
+    }
+    throw error;
   }
-  return response.json();
 }
 
 function fetchPersonInstagram(personId) {
@@ -66,37 +66,29 @@ export function loadMovies(email) {
 }
 
 export async function saveMovies(email, list) {
-  const response = await fetch("/api/collection", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    credentials: "same-origin",
-    body: JSON.stringify({ movies: list }),
-  });
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.error || "Gagal menyimpan koleksi ke server lokal.");
+  if (!email) throw new Error("Profil lokal tidak ditemukan.");
+  if (!Array.isArray(list) || list.length > 1000) {
+    throw new Error("Koleksi tidak valid (maksimal 1.000 film).");
   }
-  localStorage.setItem("mv_movies_" + email, JSON.stringify(result.movies));
-  localStorage.setItem(`mv_local_migrated_${email}`, "1");
-  return result.movies;
+  try {
+    localStorage.setItem("mv_movies_" + email, JSON.stringify(list));
+    localStorage.setItem(`mv_static_migrated_${email}`, "1");
+  } catch (error) {
+    throw new Error(
+      error.name === "QuotaExceededError"
+        ? "Penyimpanan browser penuh. Hapus sebagian film atau data situs."
+        : `Koleksi gagal disimpan di browser: ${error.message}`
+    );
+  }
+  return list;
 }
 
 export async function fetchMovies(email) {
-  const response = await fetch("/api/collection", {
-    credentials: "same-origin",
-  });
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(result.error || "Gagal memuat koleksi dari server lokal.");
-  }
-  const movies = (result.movies || [])
-    .map(upgradeSirenHeadMovie)
-    .map(upgradePersonalRating);
-  localStorage.setItem("mv_movies_" + email, JSON.stringify(movies));
-  if (result.hasCollection) {
-    localStorage.setItem(`mv_local_migrated_${email}`, "1");
+  const movies = loadMovies(email);
+  if (localStorage.getItem("mv_movies_" + email) !== null) {
+    localStorage.setItem(`mv_static_migrated_${email}`, "1");
   } else {
-    localStorage.removeItem(`mv_local_migrated_${email}`);
+    localStorage.removeItem(`mv_static_migrated_${email}`);
   }
   return movies;
 }
@@ -422,11 +414,7 @@ async function searchOmdbMovies(query, page = 1) {
     type: "movie",
     page: String(page),
   });
-  const response = await fetch(`https://www.omdbapi.com/?${params}`);
-  if (!response.ok) {
-    throw new Error(`OMDb membalas ${response.status}.`);
-  }
-  const data = await response.json();
+  const data = await fetchJson(`https://www.omdbapi.com/?${params}`);
   if (data.Response === "False") {
     if (data.Error === "Movie not found!") return { movies: [], total: 0 };
     throw new Error(data.Error || "Pencarian OMDb gagal.");
@@ -650,9 +638,7 @@ export async function fetchLatestMovies(page = 1) {
 export async function fetchPopular() {
   const url =
     BASE + "/trending/movie/week?api_key=" + TMDB_KEY + "&language=id-ID";
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Gagal menghubungi TMDB.");
-  const data = await res.json();
+  const data = await fetchJson(url);
   return data.results
     .filter((m) => m.poster_path)
     .slice(0, 7)
@@ -672,17 +658,7 @@ export async function fetchTrendingMovies({ signal } = {}) {
   try {
     const url =
       BASE + "/trending/movie/week?api_key=" + TMDB_KEY + "&language=id-ID";
-    const res = await fetch(url, { signal });
-
-    if (!res.ok) {
-      throw new Error(
-        res.status === 401
-          ? "API key TMDB ditolak (401). Periksa lagi VITE_TMDB_KEY."
-          : "TMDB membalas " + res.status + "."
-      );
-    }
-
-    const data = await res.json();
+    const data = await fetchJson(url, { signal });
     const movies = (data.results || [])
       .filter((m) => m && (m.backdrop_path || m.poster_path))
       .slice(0, 8)

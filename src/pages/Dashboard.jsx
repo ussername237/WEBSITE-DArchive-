@@ -86,10 +86,10 @@ export default function Dashboard() {
     fetchMovies(email)
       .then(async (serverMovies) => {
         let items = serverMovies;
-        const hasMigratedLocalCollection = localStorage.getItem(
-          `mv_local_migrated_${email}`
+        const hasMigratedBrowserCollection = localStorage.getItem(
+          `mv_static_migrated_${email}`
         );
-        if (!serverMovies.length && !hasMigratedLocalCollection) {
+        if (!serverMovies.length && !hasMigratedBrowserCollection) {
           if (localMovies.length) {
             items = localMovies;
             await saveMovies(email, items);
@@ -586,10 +586,6 @@ export default function Dashboard() {
     ));
   }
 
-  if (!session?.email) {
-    return <DashboardWelcome onLogin={() => navigate("/login")} />;
-  }
-
   return (
     <div className="min-h-screen bg-[#090a0d] text-slate-100">
       <AppNavigation />
@@ -603,6 +599,9 @@ export default function Dashboard() {
               <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 DArchive
               </h1>
+              <p className="mt-2 text-xs text-slate-500">
+                Koleksi tersimpan di browser ini dan tidak tersinkron antarperangkat.
+              </p>
             </div>
             <div
               className={
@@ -1067,35 +1066,6 @@ function MovieGroup({ title, count, emptyText, className = "", children }) {
         </p>
       )}
     </section>
-  );
-}
-
-function DashboardWelcome({ onLogin }) {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-[#090a0d] px-4 text-slate-100">
-      <section className="w-full max-w-xl rounded-3xl border border-white/[0.07] bg-[#111318] p-7 sm:p-10">
-        <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-xs font-semibold tracking-widest text-slate-200">
-          DZ
-        </span>
-        <p className="mt-8 text-xs font-medium tracking-[0.2em] text-slate-500">
-          HALAMAN DASHBOARD
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-          DArchive
-        </h1>
-        <p className="mt-6 max-w-md text-sm leading-6 text-slate-500">
-          Simpan daftar tontonan, tandai film favorit, dan lihat informasi film
-          dalam satu ruang pribadi.
-        </p>
-        <button
-          type="button"
-          onClick={onLogin}
-          className="mt-8 rounded-xl bg-slate-100 px-5 py-3 text-sm font-medium text-slate-950 transition hover:bg-white"
-        >
-          Lanjut ke halaman login
-        </button>
-      </section>
-    </main>
   );
 }
 

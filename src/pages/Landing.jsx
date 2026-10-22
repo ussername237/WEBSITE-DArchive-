@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MovieCarousel from "../components/MovieCarousel.jsx";
-import { getSession } from "../lib/auth.js";
 import { fetchTrendingMovies, hasTmdb } from "../lib/movies.js";
 import "./Landing.css";
 
@@ -17,9 +16,7 @@ const ACCENTS = [
  * Navbar + intro + carousel sorotan + grid film populer.
  */
 export default function Landing() {
-  const session = getSession();
-  const loggedIn = Boolean(session);
-  const nextPath = loggedIn ? "/dashboard" : "/login";
+  const nextPath = "/dashboard";
 
   const [state, setState] = useState({
     movies: [],
@@ -74,7 +71,7 @@ export default function Landing() {
           <nav className="mv-nav__links" aria-label="Navigasi utama">
             <a href="#populer">Film</a>
             <Link to={nextPath}>Daftar tontonan</Link>
-            {loggedIn && <Link to="/dashboard">Dashboard</Link>}
+            <Link to="/dashboard">Dashboard</Link>
           </nav>
 
           <div className="mv-nav__actions">
@@ -89,7 +86,7 @@ export default function Landing() {
               {source === "tmdb" ? "TMDB live" : "Mode demo"}
             </span>
             <Link className="mv-btn mv-btn--ghost mv-nav__cta" to={nextPath}>
-              {loggedIn ? "Dashboard" : "Masuk"}
+              Buka koleksi
             </Link>
           </div>
         </div>
@@ -118,7 +115,7 @@ export default function Landing() {
                 </svg>
               </a>
               <Link className="mv-btn mv-btn--ghost" to={nextPath}>
-                {loggedIn ? "Buka daftar tontonan" : "Masuk ke akun"}
+                Buka daftar tontonan
               </Link>
             </div>
           </div>
