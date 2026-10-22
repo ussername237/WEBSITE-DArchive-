@@ -42,7 +42,6 @@ export default function AppNavigation() {
               href="/cdn-cgi/access/logout?returnTo=/"
               className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-slate-300 transition hover:border-white/25 hover:text-white"
             >
-              Keluar
             </a>
           )}
         </div>
